@@ -74,7 +74,7 @@ ifneq ($(TRIM),)
 			LEADING:$(TRIM) \
 			TRAILING:$(TRIM) \
 			SLIDINGWINDOW:4:$(TRIM) \
-			MINLEN:25 2>> trim10.log; \
+			MINLEN:25 2>> trim10.log;
 			cat $(TRIM).$(NUM_SUBSAMP).PP.$(READ1) $(TRIM).$(NUM_SUBSAMP).UP.$(READ1) $(TRIM).$(NUM_SUBSAMP).UP.$(READ2) > $(RUN).left.$(TRIM).fq ;
 			@mv $(TRIM).$(NUM_SUBSAMP).PP.$(READ2) $(RUN).right.$(TRIM).fq;
 #trim
