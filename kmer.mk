@@ -27,23 +27,28 @@ TRINDIR := $(dir $(firstword $(TRINITY)))
 PATH:=$(MAKEDIR):$(PATH)
 trim = $(TRIM)
 
-all:trin pslx pep blast
+all:analysis_files/$(RUN).Trinity.fasta analysis_files/$(RUN).Trinity.fasta.pslx pep blast
 
+trin:analysis_files/$(RUN).Trinity.fasta
+pslx:analysis_files/$(RUN).Trinity.fasta.pslx
+subsamp:raw.$(NUM_SUBSAMP).$(READ1) raw.$(NUM_SUBSAMP).$(READ2)
+pep:analysis_files/$(RUN).Trinity.fasta.pep
+blast:analysis_files/$(RUN).blast
 
-subsamp: 
+raw.$(NUM_SUBSAMP).$(READ1) raw.$(NUM_SUBSAMP).$(READ2):$(READ1) $(READ2) 
 		python ${MAKEDIR}/subsampler.py $(NUM_SUBSAMP) $(READ1) $(READ2)
 		mv subsamp_1.fastq raw.$(NUM_SUBSAMP).$(READ1)
 		mv subsamp_2.fastq raw.$(NUM_SUBSAMP).$(READ2)        
-pslx:analysis_files/$(RUN).Trinity.fasta
+analysis_files/$(RUN).Trinity.fasta.pslx:analysis_files/$(RUN).Trinity.fasta
 		$(TRINDIR)/Analysis/FL_reconstruction_analysis/FL_trans_analysis_pipeline.pl --target ${MAKEDIR}/$(MUS) \
 		--query analysis_files/$(RUN).Trinity.fasta; mv *pslx analysis_files/
 		rm *summary *maps *selected
-pep:analysis_files/$(RUN).Trinity.fasta
+analysis_files/$(RUN).Trinity.fasta.pep:analysis_files/$(RUN).Trinity.fasta
 		$(TRINDIR)/trinity-plugins/transdecoder/TransDecoder --quiet --CPU $(CPU) -t analysis_files/$(RUN).Trinity.fasta \
 		--search_pfam $(PFAM); \
 		rm *bed *gff3 *dat *tbl *cds; mv $(RUN).Trinity.fasta.transdecoder.pep analysis_files/$(RUN).Trinity.fasta.pep
 		rm -fr transdecoder*
-blast:analysis_files/$(RUN).Trinity.fasta
+analysis_files/$(RUN).blast:analysis_files/$(RUN).Trinity.fasta
 		blastp -query analysis_files/$(RUN).Trinity.fasta.pep -db $(BLAST_DB) -evalue 1e-80 -num_threads 8 \
 		-outfmt "6 qseqid sacc pident length evalue" > analysis_files/$(RUN).blast
 
