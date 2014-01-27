@@ -65,7 +65,6 @@ analysis_files/$(RUN).Trinity.fasta:raw.$(NUM_SUBSAMP).$(READ2) raw.$(NUM_SUBSAM
 			@if [ ! -d $(RUN) ] ; then mkdir $(RUN) ; fi
 			@if [ ! -d analysis_files ] ; then mkdir analysis_files ; fi
 ifneq ($(TRIM),)
-			@echo trim=$$(TRIM)
 			java -XX:ParallelGCThreads=32 -Xmx$(MEM)g -jar ${MAKEDIR}/trimmomatic-0.32.jar PE \
 			-phred33 -threads $(CPU) \
 			raw.$(NUM_SUBSAMP).$(READ1) \
@@ -82,25 +81,27 @@ ifneq ($(TRIM),)
 			@cat $(TRIM).$(NUM_SUBSAMP).PP.$(READ1) $(TRIM).$(NUM_SUBSAMP).UP.$(READ1) $(TRIM).$(NUM_SUBSAMP).UP.$(READ2) > $(RUN).left.$(TRIM).fq ;
 			@mv $(TRIM).$(NUM_SUBSAMP).PP.$(READ2) $(RUN).right.$(TRIM).fq;
 #trim
-			$(TRINDIR)/Trinity.pl --bflyGCThread 25 --full_cleanup --min_kmer_cov 1 --seqType fq --JM $(MEM)G --bflyHeapSpaceMax $(MEM)G \
+			$(TRINDIR)/Trinity.pl --bflyGCThread 25 --full_cleanup --seqType fq --JM $(MEM)G --bflyHeapSpaceMax $(MEM)G \
 			--left $(RUN).left.$(TRIM).fq --right $(RUN).right.$(TRIM).fq --group_pairs_distance 999 \
 			--CPU $(CPU) --CuffFly --output $(RUN);
 			@mv $(RUN).Trinity.fasta analysis_files/
 else
 
 #fastool
-			fastool --illumina-trinity --to-fasta raw.$(NUM_SUBSAMP).$(READ1) >> $(RUN)/left.fa 2> $(RUN)/reads.left.fq.readcount
-			fastool --illumina-trinity --to-fasta raw.$(NUM_SUBSAMP).$(READ2) >> $(RUN)/right.fa 2> $(RUN)/reads.right.fq.readcount
+			@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` ---FASTOOL--- '\n\n'
+			fastool --illumina-trinity --to-fasta raw.$(NUM_SUBSAMP).$(READ1) > $(RUN)/left.fa 2> $(RUN)/reads.left.fq.readcount
+			fastool --illumina-trinity --to-fasta raw.$(NUM_SUBSAMP).$(READ2) > $(RUN)/right.fa 2> $(RUN)/reads.right.fq.readcount
 			@cat $(RUN)/left.fa $(RUN)/right.fa > $(RUN)/both.fa
 			@touch $(RUN)/both.fa.read_count
 #jellyfish
-			~/jellyfish-2.0.0/bin/jellyfish count -m25 -t$(CPU) -C -s1G -o $(RUN)/jf.5prime <(python ${MAKEDIR}/5prime.py $(RUN)/both.fa)
-			~/jellyfish-2.0.0/bin/jellyfish count -m25 -t$(CPU) -C -s1G -o $(RUN)/jf.3prime -L2 <(python ${MAKEDIR}/3prime.py $(RUN)/both.fa)
+			@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` ---JELLYFISH--- '\n\n'
+			~/jellyfish-2.0.0/bin/jellyfish count -m25 -t$(CPU) -C -s2G -o $(RUN)/jf.5prime <(python ${MAKEDIR}/5prime.py $(RUN)/both.fa)
+			~/jellyfish-2.0.0/bin/jellyfish count -m25 -t$(CPU) -C -s2G -o $(RUN)/jf.3prime -L2 <(python ${MAKEDIR}/3prime.py $(RUN)/both.fa)
 			~/jellyfish-2.0.0/bin/jellyfish  merge $(RUN)/jf.3prime $(RUN)/jf.5prime -o $(RUN)/merged.jf 
 			~/jellyfish-2.0.0/bin/jellyfish dump -o $(RUN)/jellyfish.kmers.fa $(RUN)/merged.jf
 			@touch $(RUN)/jellyfish.1.finished
 #trin	
-			$(TRINDIR)/Trinity.pl --bflyGCThread 25 --full_cleanup --min_kmer_cov 1 --seqType fq --JM $(MEM)G --bflyHeapSpaceMax $(MEM)G \
+			$(TRINDIR)/Trinity.pl --bflyGCThread 25 --full_cleanup --seqType fq --JM $(MEM)G --bflyHeapSpaceMax $(MEM)G \
 			--left raw.$(NUM_SUBSAMP).$(READ1) --right raw.$(NUM_SUBSAMP).$(READ2) --group_pairs_distance 999 \
 			--CPU $(CPU) --CuffFly --output $(RUN);
 			@mv $(RUN).Trinity.fasta analysis_files/
