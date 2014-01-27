@@ -53,8 +53,8 @@ blast:analysis_files/$(RUN).Trinity.fasta
 
 
 trin:raw.$(NUM_SUBSAMP).$(READ2) raw.$(NUM_SUBSAMP).$(READ1)
-			if [ ! -d $(RUN) ] ; then mkdir $(RUN) ; fi
-			if [ ! -d analysis_files ] ; then mkdir analysis_files ; fi
+			@if [ ! -d $(RUN) ] ; then mkdir $(RUN) ; fi
+			@if [ ! -d analysis_files ] ; then mkdir analysis_files ; fi
 ifneq ($(TRIM),)
 			@echo trim=$$(TRIM)
 			java -XX:ParallelGCThreads=32 -Xmx$(MEM)g -jar ${MAKEDIR}/trimmomatic-0.32.jar PE \
@@ -71,7 +71,7 @@ ifneq ($(TRIM),)
 			SLIDINGWINDOW:4:$(TRIM) \
 			MINLEN:25 2>> trim10.log; \
 			cat $(TRIM).$(NUM_SUBSAMP).PP.$(READ1) $(TRIM).$(NUM_SUBSAMP).UP.$(READ1) $(TRIM).$(NUM_SUBSAMP).UP.$(READ2) > $(RUN).left.$(TRIM).fq ;
-			mv $(TRIM).$(NUM_SUBSAMP).PP.$(READ2) $(RUN).right.$(TRIM).fq;
+			@mv $(TRIM).$(NUM_SUBSAMP).PP.$(READ2) $(RUN).right.$(TRIM).fq;
 #trim
 			$(TRINDIR)/Trinity.pl --bflyGCThread 25 --full_cleanup --min_kmer_cov 1 --seqType fq --JM $(MEM)G --bflyHeapSpaceMax $(MEM)G \
 			--left $(RUN).left.$(TRIM).fq --right $(RUN).right.$(TRIM).fq --group_pairs_distance 999 \
