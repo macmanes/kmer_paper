@@ -57,7 +57,7 @@ analysis_files/$(RUN).blast:analysis_files/$(RUN).Trinity.fasta
 ###
 
 
-trin:raw.$(NUM_SUBSAMP).$(READ2) raw.$(NUM_SUBSAMP).$(READ1)
+analysis_files/$(RUN).Trinity.fasta:raw.$(NUM_SUBSAMP).$(READ2) raw.$(NUM_SUBSAMP).$(READ1)
 			@if [ ! -d $(RUN) ] ; then mkdir $(RUN) ; fi
 			@if [ ! -d analysis_files ] ; then mkdir analysis_files ; fi
 ifneq ($(TRIM),)
