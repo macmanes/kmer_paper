@@ -27,7 +27,7 @@ TRINDIR := $(dir $(firstword $(TRINITY)))
 PATH:=$(MAKEDIR):$(PATH)
 trim = $(TRIM)
 
-all:analysis_files/$(RUN).Trinity.fasta analysis_files/$(RUN).Trinity.fasta.pslx pep blast
+all:analysis_files/$(RUN).Trinity.fasta analysis_files/$(RUN).Trinity.fasta.pslx analysis_files/$(RUN).Trinity.fasta.pep analysis_files/$(RUN).blast
 
 trin:analysis_files/$(RUN).Trinity.fasta
 pslx:analysis_files/$(RUN).Trinity.fasta.pslx
