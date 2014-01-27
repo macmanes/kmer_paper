@@ -44,13 +44,15 @@ analysis_files/$(RUN).Trinity.fasta.pslx:analysis_files/$(RUN).Trinity.fasta
 		@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` ---PSLXing--- '\n\n'
 		$(TRINDIR)/Analysis/FL_reconstruction_analysis/FL_trans_analysis_pipeline.pl --target ${MAKEDIR}/$(MUS) \
 		--query analysis_files/$(RUN).Trinity.fasta; mv *pslx analysis_files/
-		rm *summary *maps *selected
+		@rm *summary *maps *selected
 analysis_files/$(RUN).Trinity.fasta.pep:analysis_files/$(RUN).Trinity.fasta
+		@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` ---TRANSDECODER--- '\n\n'
 		$(TRINDIR)/trinity-plugins/transdecoder/TransDecoder --quiet --CPU $(CPU) -t analysis_files/$(RUN).Trinity.fasta \
 		--search_pfam $(PFAM); \
-		rm *bed *gff3 *dat *tbl *cds; mv $(RUN).Trinity.fasta.transdecoder.pep analysis_files/$(RUN).Trinity.fasta.pep
-		rm -fr transdecoder*
+		@rm *bed *gff3 *dat *tbl *cds; mv $(RUN).Trinity.fasta.transdecoder.pep analysis_files/$(RUN).Trinity.fasta.pep
+		@rm -fr transdecoder*
 analysis_files/$(RUN).blast:analysis_files/$(RUN).Trinity.fasta
+		@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` ---BLASTp--- '\n\n'
 		blastp -query analysis_files/$(RUN).Trinity.fasta.pep -db $(BLAST_DB) -evalue 1e-80 -num_threads 8 \
 		-outfmt "6 qseqid sacc pident length evalue" > analysis_files/$(RUN).blast
 
@@ -77,7 +79,7 @@ ifneq ($(TRIM),)
 			TRAILING:$(TRIM) \
 			SLIDINGWINDOW:4:$(TRIM) \
 			MINLEN:25 2>> trim10.log;
-			cat $(TRIM).$(NUM_SUBSAMP).PP.$(READ1) $(TRIM).$(NUM_SUBSAMP).UP.$(READ1) $(TRIM).$(NUM_SUBSAMP).UP.$(READ2) > $(RUN).left.$(TRIM).fq ;
+			@cat $(TRIM).$(NUM_SUBSAMP).PP.$(READ1) $(TRIM).$(NUM_SUBSAMP).UP.$(READ1) $(TRIM).$(NUM_SUBSAMP).UP.$(READ2) > $(RUN).left.$(TRIM).fq ;
 			@mv $(TRIM).$(NUM_SUBSAMP).PP.$(READ2) $(RUN).right.$(TRIM).fq;
 #trim
 			$(TRINDIR)/Trinity.pl --bflyGCThread 25 --full_cleanup --min_kmer_cov 1 --seqType fq --JM $(MEM)G --bflyHeapSpaceMax $(MEM)G \
