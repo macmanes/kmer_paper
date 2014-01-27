@@ -36,10 +36,12 @@ pep:analysis_files/$(RUN).Trinity.fasta.pep
 blast:analysis_files/$(RUN).blast
 
 raw.$(NUM_SUBSAMP).$(READ1) raw.$(NUM_SUBSAMP).$(READ2):$(READ1) $(READ2) 
+		@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` ---SUBSAMPLING--- '\n\n'
 		python ${MAKEDIR}/subsampler.py $(NUM_SUBSAMP) $(READ1) $(READ2)
-		mv subsamp_1.fastq raw.$(NUM_SUBSAMP).$(READ1)
-		mv subsamp_2.fastq raw.$(NUM_SUBSAMP).$(READ2)        
+		@mv subsamp_1.fastq raw.$(NUM_SUBSAMP).$(READ1)
+		@mv subsamp_2.fastq raw.$(NUM_SUBSAMP).$(READ2)        
 analysis_files/$(RUN).Trinity.fasta.pslx:analysis_files/$(RUN).Trinity.fasta
+		@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` ---PSLXing--- '\n\n'
 		$(TRINDIR)/Analysis/FL_reconstruction_analysis/FL_trans_analysis_pipeline.pl --target ${MAKEDIR}/$(MUS) \
 		--query analysis_files/$(RUN).Trinity.fasta; mv *pslx analysis_files/
 		rm *summary *maps *selected
