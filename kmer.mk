@@ -76,22 +76,23 @@ ifneq ($(TRIM),)
 			$(TRINDIR)/Trinity.pl --bflyGCThread 25 --full_cleanup --min_kmer_cov 1 --seqType fq --JM $(MEM)G --bflyHeapSpaceMax $(MEM)G \
 			--left $(RUN).left.$(TRIM).fq --right $(RUN).right.$(TRIM).fq --group_pairs_distance 999 \
 			--CPU $(CPU) --CuffFly --output $(RUN);
-			mv $(RUN).Trinity.fasta analysis_files/
+			@mv $(RUN).Trinity.fasta analysis_files/
 else
+
 #fastool
 			fastool --illumina-trinity --to-fasta raw.$(NUM_SUBSAMP).$(READ1) >> $(RUN)/left.fa 2> $(RUN)/reads.left.fq.readcount
 			fastool --illumina-trinity --to-fasta raw.$(NUM_SUBSAMP).$(READ2) >> $(RUN)/right.fa 2> $(RUN)/reads.right.fq.readcount
-			cat $(RUN)/left.fa $(RUN)/right.fa > $(RUN)/both.fa
-			touch $(RUN)/both.fa.read_count
+			@cat $(RUN)/left.fa $(RUN)/right.fa > $(RUN)/both.fa
+			@touch $(RUN)/both.fa.read_count
 #jellyfish
 			~/jellyfish-2.0.0/bin/jellyfish count -m25 -t$(CPU) -C -s1G -o $(RUN)/jf.5prime <(python ${MAKEDIR}/5prime.py $(RUN)/both.fa)
 			~/jellyfish-2.0.0/bin/jellyfish count -m25 -t$(CPU) -C -s1G -o $(RUN)/jf.3prime -L2 <(python ${MAKEDIR}/3prime.py $(RUN)/both.fa)
 			~/jellyfish-2.0.0/bin/jellyfish  merge $(RUN)/jf.3prime $(RUN)/jf.5prime -o $(RUN)/merged.jf 
 			~/jellyfish-2.0.0/bin/jellyfish dump -o $(RUN)/jellyfish.kmers.fa $(RUN)/merged.jf
-			touch $(RUN)/jellyfish.1.finished
+			@touch $(RUN)/jellyfish.1.finished
 #trin	
 			$(TRINDIR)/Trinity.pl --bflyGCThread 25 --full_cleanup --min_kmer_cov 1 --seqType fq --JM $(MEM)G --bflyHeapSpaceMax $(MEM)G \
 			--left raw.$(NUM_SUBSAMP).$(READ1) --right raw.$(NUM_SUBSAMP).$(READ2) --group_pairs_distance 999 \
 			--CPU $(CPU) --CuffFly --output $(RUN);
-			mv $(RUN).Trinity.fasta analysis_files/
+			@mv $(RUN).Trinity.fasta analysis_files/
 endif
