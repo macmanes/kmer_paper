@@ -68,7 +68,7 @@ ifneq ($(TRIM),)
 			java -XX:ParallelGCThreads=32 -Xmx$(MEM)g -jar ${MAKEDIR}/trimmomatic-0.32.jar PE \
 			-phred33 -threads $(CPU) \
 			raw.$(NUM_SUBSAMP).$(READ1) \
-			raw.$(NUM_SUBSAMP).$(READ1) \
+			raw.$(NUM_SUBSAMP).$(READ2) \
 			$(TRIM).$(NUM_SUBSAMP).PP.$(READ1) \
 			$(TRIM).$(NUM_SUBSAMP).UP.$(READ1) \
 			$(TRIM).$(NUM_SUBSAMP).PP.$(READ2) \
