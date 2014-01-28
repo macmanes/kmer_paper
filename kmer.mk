@@ -88,13 +88,13 @@ ifneq ($(TRIM),)
 else
 
 #fastool
-			@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` ---FASTOOL--- '\n\n'
+			@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` ---FASTOOL--- \n\n
 			fastool --illumina-trinity --to-fasta raw.$(NUM_SUBSAMP).$(READ1) > $(RUN)/left.fa 2> $(RUN)/reads.left.fq.readcount
 			fastool --illumina-trinity --to-fasta raw.$(NUM_SUBSAMP).$(READ2) > $(RUN)/right.fa 2> $(RUN)/reads.right.fq.readcount
 			cat $(RUN)/left.fa $(RUN)/right.fa > $(RUN)/both.fa
 			touch $(RUN)/both.fa.read_count
 #jellyfish
-			@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` ---JELLYFISH--- '\n\n'
+			@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` ---JELLYFISH--- \n\n
 			~/jellyfish-2.0.0/bin/jellyfish count -m25 -t$(CPU) -C -s2G -o $(RUN)/jf.5prime <(python ${MAKEDIR}/5prime.py $(RUN)/both.fa)
 			~/jellyfish-2.0.0/bin/jellyfish count -m25 -t$(CPU) -C -s2G -o $(RUN)/jf.3prime -L2 <(python ${MAKEDIR}/3prime.py $(RUN)/both.fa)
 			~/jellyfish-2.0.0/bin/jellyfish  merge $(RUN)/jf.3prime $(RUN)/jf.5prime -o $(RUN)/merged.jf 
