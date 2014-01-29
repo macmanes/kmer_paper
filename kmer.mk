@@ -96,7 +96,7 @@ else
 #jellyfish
 			@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` ---JELLYFISH--- \n\n
 			~/jellyfish-2.0.0/bin/jellyfish count -m25 -t$(CPU) -C -s2G -o $(RUN)/jf.5prime <(python ${MAKEDIR}/5prime.py $(RUN)/both.fa)
-			~/jellyfish-2.0.0/bin/jellyfish bc -m 25 -s3G -C -t t$(CPU) -o  $(RUN)/both.bf  $(RUN)/both.fa
+			~/jellyfish-2.0.0/bin/jellyfish bc -m 25 -s3G -C -t $(CPU) -o  $(RUN)/both.bf  $(RUN)/both.fa
 			~/jellyfish-2.0.0/bin/jellyfish count -m25 -t$(CPU) -C -s2G --bc $(RUN)/both.bf -o $(RUN)/jf.3prime <(python ${MAKEDIR}/3prime.py $(RUN)/both.fa)
 			~/jellyfish-2.0.0/bin/jellyfish  merge $(RUN)/jf.3prime $(RUN)/jf.5prime -o $(RUN)/merged.jf 
 			~/jellyfish-2.0.0/bin/jellyfish dump -o $(RUN)/jellyfish.kmers.fa $(RUN)/merged.jf
