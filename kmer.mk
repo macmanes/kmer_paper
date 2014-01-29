@@ -26,7 +26,6 @@ MAKEDIR := $(dir $(firstword $(MAKEFILE_LIST)))
 TRINDIR := $(dir $(firstword $(TRINITY)))
 PATH:=$(MAKEDIR):$(PATH)
 
-
 all:analysis_files/$(RUN).Trinity.fasta analysis_files/$(RUN).Trinity.fasta.pslx analysis_files/$(RUN).Trinity.fasta.pep analysis_files/$(RUN).blast
 
 trin:analysis_files/$(RUN).Trinity.fasta
@@ -49,7 +48,7 @@ analysis_files/$(RUN).Trinity.fasta.pep:analysis_files/$(RUN).Trinity.fasta
 		@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` ---TRANSDECODER--- '\n\n'
 		$(TRINDIR)/trinity-plugins/transdecoder/TransDecoder --quiet --CPU $(CPU) -t analysis_files/$(RUN).Trinity.fasta \
 		--search_pfam $(PFAM); \
-		@rm *bed *gff3 *dat *tbl *cds; mv $(RUN).Trinity.fasta.transdecoder.pep analysis_files/$(RUN).Trinity.fasta.pep
+		rm *domtbl *bed *gff3 *dat *tbl *cds; mv $(RUN).Trinity.fasta.transdecoder.pep analysis_files/$(RUN).Trinity.fasta.pep
 		rm -fr transdecoder*
 analysis_files/$(RUN).blast:analysis_files/$(RUN).Trinity.fasta
 		@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` ---BLASTp--- '\n\n'
