@@ -28,16 +28,18 @@ READ2=right.fq
 BCODES=barcodes.fa
 TRIMMOMATIC= $(shell which trimmomatic-0.32.jar)
 JELLY= $(shell which jellyfish)
+FASTOOL= $(shell which fastool)
+
 
 MAKEDIR := $(dir $(firstword $(MAKEFILE_LIST)))
 DIR := ${CURDIR}
 
 .PHONY: check clean
-all: check $(RUN)_left.$(TRIM).fastq $(RUN)_right.$(TRIM).fastq $(RUN).Trinity.fasta $(RUN).xprs
-trim: $(RUN)_left.$(TRIM).fastq $(RUN)_right.$(TRIM).fastq
-khmer:$(READ1).goodkmers.fa $(READ2).fastq.goodkmers.fa
-jelly: check $(RUN).Trinity.fasta
-express: check $(RUN).xprs
+all: check $(RUN)_left.fastq $(RUN)_right.fastq $(RUN)_right.fastq.goodkmers.fa $(RUN)_left.fastq.fastq.goodkmers.fa $(READ2).kmerfilt.fa $(READ1).kmerfilt.fa $(RUN)/both.fa $(RUN).Trinity.fasta
+#trim: $(RUN)_left.$(TRIM).fastq $(RUN)_right.$(TRIM).fastq
+#khmer:$(READ1).goodkmers.fa $(READ2).fastq.goodkmers.fa
+#jelly: check $(RUN).Trinity.fasta
+#express: check $(RUN).xprs
 
 
 
@@ -67,13 +69,16 @@ $(RUN)/jellyfish.kmers.fa:$(READ1).goodkmers.fa $(READ2).fastq.goodkmers.fa $(RE
 	$(JELLY) count -m25 -t&(CPU) -C -s3G -o jf.out $(READ1).goodkmers.fa $(READ2).fastq.goodkmers.fa $(READ1).kmerfilt.fa $(READ2).kmerfilt.fa
 	$(JELLY) dump -o $(RUN)/jellyfish.kmers.fa merged.jf
 
-fastool:$(RUN)_left.fastq $(RUN)_right.fastq
+$(RUN)/both.fa:$(RUN)_left.fastq $(RUN)_right.fastq
+	$(FASTOOL) --rev  --illumina-trinity --to-fasta $(RUN)_left.fastq >> left.fa
+	$(FASTOOL) --illumina-trinity --to-fasta $(RUN)_right.fastq >> right.fa
+	cat left.fa right.fa > $(RUN)/both.fa
+	rm left.fa right.fa &
+	touch $(RUN)/jellyfish.1.finished
 
-
-
-
-
-
+$(RUN).Trinity.fasta:$(RUN)_left.fastq $(RUN)_right.fastq
+	Trinity --min_kmer_cov $(MINK) --seqType $(SEQ) --JM $(MEM)G --bflyHeapSpaceMax $(MEM)G --bflyCPU $(BCPU) \
+	--left $(RUN)_left.fastq --right $(RUN)_right.fastq --group_pairs_distance 999 --CPU $(CPU) --output $(RUN) >>$(RUN).trinity.pe.log
 
 
 
