@@ -45,6 +45,7 @@ all: check $(RUN)_left.fastq $(RUN)_right.fastq $(RUN)_right.fastq.goodkmers.fa 
 
 $(RUN)_left.fastq $(RUN)_right.fastq: $(READ1) $(READ2)
 	@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` About to start trimming
+		mkdir $(RUN)
 		java -Xmx$(MEM)g -jar $(TRIMMOMATIC) PE -baseout $(RUN).fq -phred$(PHRED) -threads $(CPU) \
 		$(READ1) \
 		$(READ2) \
