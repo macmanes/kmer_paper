@@ -42,3 +42,10 @@ $(READ1).goodkmers.fa $(READ2).fastq.goodkmers.fa:$(READ1) $(READ2)
 	python ~/khmer/scripts/extract-untrusted-kmers.py --quiet -k 25 --limit 60 -Z 5  $(READ1) &
 	python ~/khmer/scripts/extract-untrusted-kmers.py --quiet -k 25 --limit 60 -Z 5  $(READ2)
 
+
+l:fq2fa
+	python ~/Desktop/python/fq2fa.py $(READ1).kmerfilt $(READ1).kmerfilt.fa &
+	python ~/Desktop/python/fq2fa.py $(READ2).kmerfilt $(READ2).kmerfilt.fa 
+
+s:dir
+	jellyfish count -m25 -t&(CPU) -C -s3G -o jf.out $(READ1).goodkmers.fa $(READ2).fastq.goodkmers.fa $(READ1).kmerfilt.fa $(READ2).kmerfilt.fa
