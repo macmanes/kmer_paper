@@ -33,7 +33,7 @@ TRINITY= $(shell which Trinity)
 TRANS=$(shell locate FL_trans_analysis_pipeline.pl)
 MUS=$(shell locate Mus_musculus.GRCm38.71.cdna.all.fa)
 PFAM=$(shell find /share -name  Pfam-AB.hmm.bin 2> /dev/null)
-CONVERT=$(locate fq2fa.py)
+CONVERT=$(shell locate fq2fa.py)
 LIMIT=60
 Z=5
 
