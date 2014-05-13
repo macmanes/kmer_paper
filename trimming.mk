@@ -73,7 +73,7 @@ $(READ2).kmerfilt.fa $(READ1).kmerfilt.fa:$(RUN)_right.fastq.kmerfilt $(RUN)_lef
 	python ~/Desktop/python/fq2fa.py $(READ2).kmerfilt $(READ2).kmerfilt.fa 
 
 $(RUN)/jellyfish.kmers.fa:$(RUN)_right.fastq.goodkmers.fa $(RUN)_left.fastq.goodkmers.fa $(READ1).kmerfilt.fa $(READ2).kmerfilt.fa
-	$(JELLY) count -m25 -t&(CPU) -C -s3G -o jf.out $(READ1).goodkmers.fa $(READ2).fastq.goodkmers.fa $(READ1).kmerfilt.fa $(READ2).kmerfilt.fa
+	$(JELLY) count -m25 -t$(CPU) -C -s3G -o jf.out $(READ1).goodkmers.fa $(READ2).fastq.goodkmers.fa $(READ1).kmerfilt.fa $(READ2).kmerfilt.fa
 	$(JELLY) dump -o $(RUN)/jellyfish.kmers.fa merged.jf
 
 $(RUN)/both.fa:$(RUN)_left.fastq $(RUN)_right.fastq
