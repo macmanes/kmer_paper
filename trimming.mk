@@ -42,14 +42,9 @@ DIR := ${CURDIR}
 .PHONY: check clean
 all: check $(RUN)_left.fastq $(RUN)_right.fastq $(RUN)_right.fastq.goodkmers.fa \
 	$(RUN)_left.fastq.goodkmers.fa $(RUN)_right.fastq.kmerfilt $(RUN)_left.fastq.kmerfilt $(READ2).kmerfilt.fa \
-	$(READ1).kmerfilt.fa $(RUN)/jellyfish.kmers.fa $(RUN)/both.fa $(RUN).Trinity.fasta
+	$(READ1).kmerfilt.fa $(RUN)/jellyfish.kmers.fa $(RUN)/both.fa $(RUN).Trinity.fasta \
+	$(RUN).Trinity.fasta.pslx $(RUN).Trinity.fasta.pep
 
-
-
-#trim: $(RUN)_left.$(TRIM).fastq $(RUN)_right.$(TRIM).fastq
-#khmer:$(READ1).goodkmers.fa $(READ2).fastq.goodkmers.fa
-#jelly: check $(RUN).Trinity.fasta
-#express: check $(RUN).xprs
 
 
 
@@ -97,16 +92,13 @@ $(RUN).Trinity.fasta:$(RUN)_left.fastq $(RUN)_right.fastq
 	$(TRINITY) --min_kmer_cov $(MINK) --seqType $(SEQ) --JM $(MEM)G --bflyHeapSpaceMax $(MEM)G --bflyCPU $(BCPU) \
 	--left $(RUN)_left.fastq --right $(RUN)_right.fastq --group_pairs_distance 999 --CPU $(CPU) --output $(RUN) | tee $(RUN).trinity.pe.log
 
-pslx10:$(RUN).Trinity.fasta
+$(RUN).Trinity.fasta.pslx:$(RUN).Trinity.fasta
 	$(TRANS) --target $(MUS) --query $(RUN).Trinity.fasta; rm *maps *selected *summary
 
 $(RUN).Trinity.fasta.pep:$(RUN).Trinity.fasta
 	TransDecoder --CPU $(CPU) -t $(RUN).Trinity.fasta \
 	--search_pfam $(PFAM) | tee pfam10.log; \
 	rm longest_orfs* *gff3 *dat *scores *cds *bed *inx; mv best_candidates.eclipsed_orfs_removed.pep $(RUN).Trinity.fasta.pep
-
-
-
 
 check:
 	@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` ---Begin--- '\n\n'
