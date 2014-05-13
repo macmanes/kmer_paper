@@ -32,7 +32,7 @@ FASTOOL= $(shell which fastool)
 TRINITY= $(shell which Trinity)
 TRANS=$(shell locate FL_trans_analysis_pipeline.pl)
 MUS=$(shell locate Mus_musculus.GRCm38.71.cdna.all.fa)
-PFAM=$(shell find /share/ -name  Pfam-AB.hmm.bin 2> /dev/null)
+PFAM=$(shell find / -name  Pfam-AB.hmm.bin 2> /dev/null)
 LIMIT=60
 Z=5
 
@@ -93,8 +93,8 @@ $(RUN).Trinity.fasta:$(RUN)_left.fastq $(RUN)_right.fastq
 	--left $(RUN)_left.fastq --right $(RUN)_right.fastq --group_pairs_distance 999 --CPU $(CPU) --output $(RUN) | tee $(RUN).trinity.pe.log
 
 $(RUN).Trinity.fasta.pslx:$(RUN).Trinity.fasta
-	$(TRANS) --target $(MUS) --query $(RUN).Trinity.fasta; rm *maps *selected *summary
-
+	#$(TRANS) --target $(MUS) --query $(RUN).Trinity.fasta; rm *maps *selected *summary
+	/home/macmanes/trinityrnaseq_r20140413p1/Analysis/FL_reconstruction_analysis/FL_trans_analysis_pipeline.pl --target $(MUS) --query $(RUN).Trinity.fasta; rm *maps *selected *summary
 $(RUN).Trinity.fasta.pep:$(RUN).Trinity.fasta
 	TransDecoder --CPU $(CPU) -t $(RUN).Trinity.fasta \
 	--search_pfam $(PFAM) | tee pfam10.log; \
