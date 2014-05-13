@@ -56,7 +56,7 @@ $(RUN)_left.fastq $(RUN)_right.fastq: $(READ1) $(READ2)
 		$(READ1) \
 		$(READ2) \
 		ILLUMINACLIP:${MAKEDIR}/$(BCODES):2:40:15 \
-		LEADING:$(TRIM) TRAILING:$(TRIM) SLIDINGWINDOW:4:$(TRIM) MINLEN:$(MINLEN) 2> trim.log ;
+		LEADING:$(TRIM) TRAILING:$(TRIM) SLIDINGWINDOW:4:$(TRIM) MINLEN:$(MINLEN) | tee trim.log ;
 		cat $(RUN)_1P.fq $(RUN)_1U.fq > $(RUN)_left.fastq ;
 		cat $(RUN)_2P.fq $(RUN)_2U.fq > $(RUN)_right.fastq ;
 		rm $(RUN)_1P.fq $(RUN)_1U.fq $(RUN)_2P.fq $(RUN)_2U.fq ;
@@ -91,7 +91,7 @@ $(RUN)/both.fa:$(RUN)_left.fastq $(RUN)_right.fastq
 $(RUN).Trinity.fasta:$(RUN)_left.fastq $(RUN)_right.fastq
 	@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` starting trinity
 	Trinity --min_kmer_cov $(MINK) --seqType $(SEQ) --JM $(MEM)G --bflyHeapSpaceMax $(MEM)G --bflyCPU $(BCPU) \
-	--left $(RUN)_left.fastq --right $(RUN)_right.fastq --group_pairs_distance 999 --CPU $(CPU) --output $(RUN) >>$(RUN).trinity.pe.log
+	--left $(RUN)_left.fastq --right $(RUN)_right.fastq --group_pairs_distance 999 --CPU $(CPU) --output $(RUN) | tee $(RUN).trinity.pe.log
 
 
 
