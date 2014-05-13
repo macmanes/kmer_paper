@@ -60,7 +60,7 @@ $(RUN)_left.fastq $(RUN)_right.fastq: $(READ1) $(READ2)
 		$(READ1) \
 		$(READ2) \
 		ILLUMINACLIP:${MAKEDIR}/$(BCODES):2:40:15 \
-		LEADING:$(TRIM) TRAILING:$(TRIM) SLIDINGWINDOW:4:$(TRIM) MINLEN:$(MINLEN) 2> trim.log ;
+		LEADING:$(TRIM) TRAILING:$(TRIM) SLIDINGWINDOW:4:$(TRIM) MINLEN:$(MINLEN) | tee trim.log ;
 		cat $(RUN)_1P.fq $(RUN)_1U.fq > $(RUN)_left.fastq ;
 		cat $(RUN)_2P.fq $(RUN)_2U.fq > $(RUN)_right.fastq ;
 		rm $(RUN)_1P.fq $(RUN)_1U.fq $(RUN)_2P.fq $(RUN)_2U.fq ;
@@ -74,8 +74,8 @@ $(RUN)_right.fastq.goodkmers.fa $(RUN)_left.fastq.goodkmers.fa $(RUN)_right.fast
 	@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` ending location aware trimming
 
 $(READ2).kmerfilt.fa $(READ1).kmerfilt.fa:$(RUN)_right.fastq.kmerfilt $(RUN)_left.fastq.kmerfilt
-	python ~/Desktop/python/fq2fa.py $(READ1).kmerfilt $(READ1).kmerfilt.fa &
-	python ~/Desktop/python/fq2fa.py $(READ2).kmerfilt $(READ2).kmerfilt.fa 
+	python ~/Desktop/python/fq2fa.py $(RUN)_left.fastq.kmerfilt $(READ1).kmerfilt.fa &
+	python ~/Desktop/python/fq2fa.py $(RUN)_right.fastq.kmerfilt $(READ2).kmerfilt.fa 
 
 $(RUN)/jellyfish.kmers.fa:$(RUN)_right.fastq.goodkmers.fa $(RUN)_left.fastq.goodkmers.fa $(READ1).kmerfilt.fa $(READ2).kmerfilt.fa
 	@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` starting jellyfish
@@ -94,7 +94,11 @@ $(RUN)/both.fa:$(RUN)_left.fastq $(RUN)_right.fastq
 
 $(RUN).Trinity.fasta:$(RUN)_left.fastq $(RUN)_right.fastq
 	@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` starting trinity
+<<<<<<< HEAD
 	$(TRINITY) --min_kmer_cov $(MINK) --seqType $(SEQ) --JM $(MEM)G --bflyHeapSpaceMax $(MEM)G --bflyCPU $(BCPU) \
+=======
+	Trinity --min_kmer_cov $(MINK) --seqType $(SEQ) --JM $(MEM)G --bflyHeapSpaceMax $(MEM)G --bflyCPU $(BCPU) \
+>>>>>>> FETCH_HEAD
 	--left $(RUN)_left.fastq --right $(RUN)_right.fastq --group_pairs_distance 999 --CPU $(CPU) --output $(RUN) | tee $(RUN).trinity.pe.log
 
 pslx10:$(RUN).Trinity.fasta
