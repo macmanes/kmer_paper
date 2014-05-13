@@ -70,8 +70,8 @@ $(RUN)_right.fastq.goodkmers.fa $(RUN)_left.fastq.goodkmers.fa $(RUN)_right.fast
 	@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` ending location aware trimming
 
 $(READ2).kmerfilt.fa $(READ1).kmerfilt.fa:$(RUN)_right.fastq.kmerfilt $(RUN)_left.fastq.kmerfilt
-	python ~/Desktop/python/fq2fa.py $(READ1).kmerfilt $(READ1).kmerfilt.fa &
-	python ~/Desktop/python/fq2fa.py $(READ2).kmerfilt $(READ2).kmerfilt.fa 
+	python ~/Desktop/python/fq2fa.py $(RUN)_left.fastq.kmerfilt $(READ1).kmerfilt.fa &
+	python ~/Desktop/python/fq2fa.py $(RUN)_right.fastq.kmerfilt $(READ2).kmerfilt.fa 
 
 $(RUN)/jellyfish.kmers.fa:$(RUN)_right.fastq.goodkmers.fa $(RUN)_left.fastq.goodkmers.fa $(READ1).kmerfilt.fa $(READ2).kmerfilt.fa
 	@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` starting jellyfish
