@@ -90,7 +90,7 @@ $(RUN)/both.fa:$(RUN)_left.fastq $(RUN)_right.fastq
 
 $(RUN).Trinity.fasta:$(RUN)_left.fastq $(RUN)_right.fastq
 	@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` starting trinity
-	$(TRINITY) --min_kmer_cov $(MINK) --seqType $(SEQ) --JM $(MEM)G --SS_lib_type FR --bflyHeapSpaceMax $(MEM)G --bflyCPU $(BCPU) \
+	$(TRINITY) --min_kmer_cov $(MINK) --seqType $(SEQ) --JM $(MEM)G --bflyHeapSpaceMax $(MEM)G --bflyCPU $(BCPU) \
 	--left $(RUN)_left.fastq --right $(RUN)_right.fastq --group_pairs_distance 999 --CPU $(CPU) --output $(RUN) | tee $(RUN).trinity.pe.log
 
 $(RUN).Trinity.fasta.pslx:$(RUN).Trinity.fasta
