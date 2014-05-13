@@ -33,6 +33,7 @@ TRINITY= $(shell which Trinity)
 TRANS=$(shell locate FL_trans_analysis_pipeline.pl)
 MUS=$(shell locate Mus_musculus.GRCm38.71.cdna.all.fa)
 PFAM=$(shell find /share -name  Pfam-AB.hmm.bin 2> /dev/null)
+CONVERT=$(locate fq2fa.py)
 LIMIT=60
 Z=5
 
@@ -64,13 +65,13 @@ $(RUN)_left.fastq $(RUN)_right.fastq: $(READ1) $(READ2)
 
 $(RUN)_right.fastq.goodkmers.fa $(RUN)_left.fastq.goodkmers.fa $(RUN)_right.fastq.kmerfilt $(RUN)_left.fastq.kmerfilt:$(RUN)_left.fastq $(RUN)_right.fastq
 	@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` location aware trimming
-	python ~/khmer/scripts/extract-untrusted-kmers.py --quiet -k 25 --limit $(LIMIT) -Z $(Z) $(RUN)_left.fastq &
-	python ~/khmer/scripts/extract-untrusted-kmers.py --quiet -k 25 --limit $(LIMIT) -Z $(Z) $(RUN)_right.fastq
+	python $$HOME/khmer/scripts/extract-untrusted-kmers.py --quiet -k 25 --limit $(LIMIT) -Z $(Z) $(RUN)_left.fastq &
+	python $$HOME/khmer/scripts/extract-untrusted-kmers.py --quiet -k 25 --limit $(LIMIT) -Z $(Z) $(RUN)_right.fastq
 	@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` ending location aware trimming
 
 $(READ2).kmerfilt.fa $(READ1).kmerfilt.fa:$(RUN)_right.fastq.kmerfilt $(RUN)_left.fastq.kmerfilt
-	python ~/Desktop/python/fq2fa.py $(RUN)_left.fastq.kmerfilt $(READ1).kmerfilt.fa &
-	python ~/Desktop/python/fq2fa.py $(RUN)_right.fastq.kmerfilt $(READ2).kmerfilt.fa 
+	python $(CONVERT) $(RUN)_left.fastq.kmerfilt $(READ1).kmerfilt.fa &
+	python $(CONVERT) $(RUN)_right.fastq.kmerfilt $(READ2).kmerfilt.fa 
 
 $(RUN)/jellyfish.kmers.fa:$(RUN)_right.fastq.goodkmers.fa $(RUN)_left.fastq.goodkmers.fa $(READ1).kmerfilt.fa $(READ2).kmerfilt.fa
 	@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` starting jellyfish
@@ -93,8 +94,7 @@ $(RUN).Trinity.fasta:$(RUN)_left.fastq $(RUN)_right.fastq
 	--left $(RUN)_left.fastq --right $(RUN)_right.fastq --group_pairs_distance 999 --CPU $(CPU) --output $(RUN) | tee $(RUN).trinity.pe.log
 
 $(RUN).Trinity.fasta.pslx:$(RUN).Trinity.fasta
-	#$(TRANS) --target $(MUS) --query $(RUN).Trinity.fasta; rm *maps *selected *summary
-	/home/macmanes/trinityrnaseq_r20140413p1/Analysis/FL_reconstruction_analysis/FL_trans_analysis_pipeline.pl --target $(MUS) --query $(RUN).Trinity.fasta; rm *maps *selected *summary
+	$(TRANS) --target $(MUS) --query $(RUN).Trinity.fasta; rm *maps *selected *summary
 $(RUN).Trinity.fasta.pep:$(RUN).Trinity.fasta
 	TransDecoder --CPU $(CPU) -t $(RUN).Trinity.fasta \
 	--search_pfam $(PFAM) | tee pfam10.log; \
