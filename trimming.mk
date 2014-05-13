@@ -64,19 +64,24 @@ $(RUN)_left.fastq $(RUN)_right.fastq: $(READ1) $(READ2)
 
 
 $(RUN)_right.fastq.goodkmers.fa $(RUN)_left.fastq.goodkmers.fa $(RUN)_right.fastq.kmerfilt $(RUN)_left.fastq.kmerfilt:$(RUN)_left.fastq $(RUN)_right.fastq
+	@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` location aware trimming
 	python ~/khmer/scripts/extract-untrusted-kmers.py --quiet -k 25 --limit $(LIMIT) -Z $(Z) $(RUN)_left.fastq &
 	python ~/khmer/scripts/extract-untrusted-kmers.py --quiet -k 25 --limit $(LIMIT) -Z $(Z) $(RUN)_right.fastq
-
+	@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` ending location aware trimming
 
 $(READ2).kmerfilt.fa $(READ1).kmerfilt.fa:$(RUN)_right.fastq.kmerfilt $(RUN)_left.fastq.kmerfilt
 	python ~/Desktop/python/fq2fa.py $(READ1).kmerfilt $(READ1).kmerfilt.fa &
 	python ~/Desktop/python/fq2fa.py $(READ2).kmerfilt $(READ2).kmerfilt.fa 
 
 $(RUN)/jellyfish.kmers.fa:$(RUN)_right.fastq.goodkmers.fa $(RUN)_left.fastq.goodkmers.fa $(READ1).kmerfilt.fa $(READ2).kmerfilt.fa
+	@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` starting jellyfish
 	$(JELLY) count -m25 -t$(CPU) -C -s3G -o jf.out $(RUN)_right.fastq.goodkmers.fa $(RUN)_left.fastq.goodkmers.fa $(READ1).kmerfilt.fa $(READ2).kmerfilt.fa
+	$(JELLY) merge jf.out* -o merged.jf 
 	$(JELLY) dump -o $(RUN)/jellyfish.kmers.fa merged.jf
+	@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` ending jellyfish
 
 $(RUN)/both.fa:$(RUN)_left.fastq $(RUN)_right.fastq
+	@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` starting fastool
 	$(FASTOOL) --rev  --illumina-trinity --to-fasta $(RUN)_left.fastq >> left.fa
 	$(FASTOOL) --illumina-trinity --to-fasta $(RUN)_right.fastq >> right.fa
 	cat left.fa right.fa > $(RUN)/both.fa
@@ -84,6 +89,7 @@ $(RUN)/both.fa:$(RUN)_left.fastq $(RUN)_right.fastq
 	touch $(RUN)/jellyfish.1.finished
 
 $(RUN).Trinity.fasta:$(RUN)_left.fastq $(RUN)_right.fastq
+	@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` starting trinity
 	Trinity --min_kmer_cov $(MINK) --seqType $(SEQ) --JM $(MEM)G --bflyHeapSpaceMax $(MEM)G --bflyCPU $(BCPU) \
 	--left $(RUN)_left.fastq --right $(RUN)_right.fastq --group_pairs_distance 999 --CPU $(CPU) --output $(RUN) >>$(RUN).trinity.pe.log
 
