@@ -29,6 +29,9 @@ BCODES=barcodes.fa
 TRIMMOMATIC= $(shell which trimmomatic-0.32.jar)
 JELLY= $(shell which jellyfish)
 FASTOOL= $(shell which fastool)
+TRINITY= $(shell which Trinity)
+TRANS=$(shell locate FL_trans_analysis_pipeline.pl)
+MUS=$(shell locate Mus_musculus.GRCm38.71.cdna.all.fa)
 LIMIT=60
 Z=5
 
@@ -90,9 +93,16 @@ $(RUN)/both.fa:$(RUN)_left.fastq $(RUN)_right.fastq
 
 $(RUN).Trinity.fasta:$(RUN)_left.fastq $(RUN)_right.fastq
 	@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` starting trinity
-	Trinity --min_kmer_cov $(MINK) --seqType $(SEQ) --JM $(MEM)G --bflyHeapSpaceMax $(MEM)G --bflyCPU $(BCPU) \
+	$(TRINITY) --min_kmer_cov $(MINK) --seqType $(SEQ) --JM $(MEM)G --bflyHeapSpaceMax $(MEM)G --bflyCPU $(BCPU) \
 	--left $(RUN)_left.fastq --right $(RUN)_right.fastq --group_pairs_distance 999 --CPU $(CPU) --output $(RUN) >>$(RUN).trinity.pe.log
 
+pslx10:$(RUN).Trinity.fasta
+	$(TRANS) --target $(MUS) --query $(RUN).Trinity.fasta; rm *maps *selected *summary
+
+$(RUN).Trinity.fasta.pep:$(RUN).Trinity.fasta
+	$(TRINITY)/trinity-plugins/transdecoder/transcripts_to_best_scoring_ORFs.pl --CPU $(CPU) -t $(RUN).Trinity.fasta \
+	--search_pfam $(PFAM) >>pfam10.log; \
+	rm longest_orfs* *gff3 *dat *scores *cds *bed *inx; mv best_candidates.eclipsed_orfs_removed.pep $(RUN).Trinity.fasta.pep
 
 
 
