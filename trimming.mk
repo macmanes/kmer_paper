@@ -65,8 +65,8 @@ $(RUN)_left.fastq $(RUN)_right.fastq: $(READ1) $(READ2)
 
 $(RUN)_right.fastq.goodkmers.fa $(RUN)_left.fastq.goodkmers.fa $(RUN)_right.fastq.kmerfilt $(RUN)_left.fastq.kmerfilt:$(RUN)_left.fastq $(RUN)_right.fastq
 	@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` location aware trimming
-	python $$HOME/khmer/scripts/extract-untrusted-kmers.py --quiet -k 25 --limit $(LIMIT) -Z $(Z) $(RUN)_left.fastq &
-	python $$HOME/khmer/scripts/extract-untrusted-kmers.py --quiet -k 25 --limit $(LIMIT) -Z $(Z) $(RUN)_right.fastq
+	python /share/khmer/scripts/extract-untrusted-kmers.py --quiet -k 25 --limit $(LIMIT) -Z $(Z) $(RUN)_left.fastq &
+	python /share/khmer/scripts/extract-untrusted-kmers.py --quiet -k 25 --limit $(LIMIT) -Z $(Z) $(RUN)_right.fastq
 	@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` ending location aware trimming
 
 $(READ2).kmerfilt.fa $(READ1).kmerfilt.fa:$(RUN)_right.fastq.kmerfilt $(RUN)_left.fastq.kmerfilt
