@@ -77,7 +77,7 @@ $(RUN)/jellyfish.kmers.fa:$(RUN)_right.fastq.goodkmers.fa $(RUN)_left.fastq.good
 	@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` starting jellyfish
 	$(JELLY) count -m25 -t$(CPU) -C -s3G -o jf.out $(RUN)_right.fastq.goodkmers.fa $(RUN)_left.fastq.goodkmers.fa $(READ1).kmerfilt.fa $(READ2).kmerfilt.fa
 	#$(JELLY) merge jf.out* -o merged.jf 
-	$(JELLY) dump -o $(RUN)/jellyfish.kmers.fa jf.out
+	$(JELLY) dump -o $(RUN)/jellyfish.kmers.fa jf.out_0
 	@echo TIMESTAMP: `date +'%a %d%b%Y  %H:%M:%S'` ending jellyfish
 
 $(RUN)/both.fa:$(RUN)_left.fastq $(RUN)_right.fastq
