@@ -43,7 +43,7 @@ DIR := ${CURDIR}
 .PHONY: check clean
 all: check $(RUN)_left.fastq $(RUN)_right.fastq $(RUN)_right.fastq.goodkmers.fa \
 	$(RUN)_left.fastq.goodkmers.fa $(RUN)_right.fastq.kmerfilt $(RUN)_left.fastq.kmerfilt $(READ2).kmerfilt.fa \
-	$(READ1).kmerfilt.fa $(RUN)/jellyfish.kmers.fa $(RUN)/both.fa $(RUN).Trinity.fasta \
+	$(READ1).kmerfilt.fa $(RUN)/jellyfish.kmers.fa $(RUN)/both.fa $(RUN)/Trinity.fasta \
 	$(RUN).Trinity.fasta.pslx $(RUN).Trinity.fasta.pep
 
 
