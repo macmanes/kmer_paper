@@ -94,9 +94,9 @@ $(RUN)/Trinity.fasta:$(RUN)_left.fastq $(RUN)_right.fastq
 	$(TRINITY) --min_kmer_cov $(MINK) --seqType $(SEQ) --JM $(MEM)G --bflyHeapSpaceMax $(MEM)G --bflyCPU $(BCPU) \
 	--left $(RUN)_left.fastq --right $(RUN)_right.fastq --group_pairs_distance 999 --CPU $(CPU) --output $(RUN) | tee $(RUN).trinity.pe.log
 
-$(RUN).Trinity.fasta.pslx:$(RUN).Trinity.fasta
+$(RUN).Trinity.fasta.pslx:$(RUN)/Trinity.fasta
 	$(TRANS) --target $(MUS) --query $(RUN)/Trinity.fasta; rm *maps *selected *summary
-$(RUN).Trinity.fasta.pep:$(RUN).Trinity.fasta
+$(RUN).Trinity.fasta.pep:$(RUN)/Trinity.fasta
 	TransDecoder --CPU $(CPU) -t $(RUN)/Trinity.fasta \
 	--search_pfam $(PFAM) | tee pfam10.log; \
 	rm longest_orfs* *gff3 *dat *scores *cds *bed *inx; mv best_candidates.eclipsed_orfs_removed.pep $(RUN).Trinity.fasta.pep
